@@ -1,0 +1,145 @@
+﻿@model RegisterLoginApplication.Models.Register
+
+@{
+    /**/
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<head>
+
+    <title>Register</title>
+
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script type="text/javascript">
+        $(".test").show();
+        setTimeout(function () { $(".test").hide(); }, 4000);
+        function ResetValue() {
+
+            $('.Reset').html("");
+            $('.Reset').val("");
+
+            return false;
+        }
+    </script>
+
+</head>
+
+<body style="background-color:deepskyblue;color:black">
+
+    <div class="container" align="center" style="background-color: cornsilk">
+        <br />
+        <h1 style="color:blueviolet">REGISTER</h1>
+        <p style="color: ActiveCaption"><b>Please Register here to Create an Account.</b></p>
+
+        @using (Html.BeginForm("Register", "Register", FormMethod.Post, new { autocomplete = "off" }))
+        {
+            <table>
+                <tr>
+                    <td style="color: sienna">FIRST NAME</td>
+                    <td>@Html.TextBoxFor(model => model.FirstName, new { @class = "control-label col-md-2 Reset", required = "required" })</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="color: red">@Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger Reset" })</td>
+                    <td> <br /></td>
+                </tr>
+
+                <tr>
+                    <td style="color: sienna">LAST NAME</td>
+                    <td>@Html.TextBoxFor(model => model.LastName, new { @class = "control-label col-md-2 Reset", required = "required" }) </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="color: red">@Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger Reset" })</td>
+                    <td> <br /> </td>
+                </tr>
+
+                <tr>
+                    <td style="color: sienna">EMAIL ID </td>
+                    <td style="color:red">@Html.TextBoxFor(model => model.EmailId, String.Empty, new { @class = "control-label col-md-2 Reset", required = "required" })  @TempData["EmailError"]</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="color: red">@Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger Reset" }) </td>
+                    <td> <br /></td>
+                </tr>
+
+                <tr>
+                    <td style="color: sienna">MOBILE NUMBER</td>
+                    @*<td style="color:red">@Html.TextBoxFor(model => model.MobileNumber, new { @class = "control-label col-md-2 Reset", required = "required", type = "number" })</td>*@
+                    <td>
+                        @Html.TextBoxFor(Model => Model.MobileNumber, new { @maxlength = "10", @class = "control-label col-md-2 Reset", required = "required" })
+                    </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="color: red">@Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger Reset" })</td>
+                <td> <br /> </td>
+            </tr>
+
+            <tr>
+                <td style="color: sienna">ROLE</td>
+                <td>@Html.TextBoxFor(model => model.Role, new { @class = "control-label col-md-2 Reset", required = "required" })</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="color: red">@Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger Reset" })</td>
+                <td> <br /> </td>
+            </tr>
+
+            <tr>
+                <td style="color: sienna">PASSWORD</td>
+                <td>@Html.EditorFor(model => model.Password, new { @class = "control-label col-md-2 Reset", required = "required" })</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="color: red">@Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger Reset" })</td>
+                <td> <br /> </td>
+            </tr>
+
+            <tr>
+                <td style="color: sienna">CONFIRM PASSWORD</td>
+                <td>@Html.EditorFor(model => model.ConfirmPassword, new { @class = "control-label col-md-2 Reset", required = "required" })</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="color: red">@Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger Reset" })</td>
+                <td> <br /> </td>
+            </tr>
+
+            <tr>
+                <td> <br /> </td>
+            </tr>
+
+            @Html.AntiForgeryToken()
+
+        </table>
+
+        <input id="Submit1" type="submit" name="submit" value="Register" style="background-color: royalblue;color:white" />
+        <input id="Reset1" type="button" value="Reset" onclick="ResetValue()" style="background-color: royalblue;color:white" />
+
+    }
+
+        @if (TempData["UserMessage"] != null)
+        {
+
+            <div class="test">
+                <p style="color:green; font-size:150%; font-family:'Times New Roman';">@TempData["UserMessage"] </p>
+            </div>
+
+        }
+
+        <div class="container signin">
+            <p>Already Have an Account? @Html.ActionLink("Login", "Login", "Login") </p>
+            <br />
+            <br /> <br />
+        </div>
+
+    </div>
+
+</body>
+
+
