@@ -1,75 +1,74 @@
-﻿@model RegisterLoginApplication.Models.Login
-
+@model RegisterLoginApplication.Models.Login
 @{
+    /**/
     Layout = null;
 }
-
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
     <meta name="viewport" content="width=device-width" />
     <title>Login</title>
-
     <script src="~/Scripts/jquery-1.10.2.js"></script>
     <script type="text/javascript">
-        $(".test").show();
-        setTimeout(function () { $(".test").hide(); }, 4000);
+        $(".Login").show();
+        setTimeout(function () { $(".Login").hide(); }, 4000);
     </script>
+    <style>
+        .LableStyle {
+            color: sienna;
+            font-family: Cambria;
+            font-size: 20px;
+            font-variant: small-caps;
+        }
 
+        .ValidationStyle {
+            color: Red;
+            font-family: 'Times New Roman';
+            font-size: 15px;
+        }
+    </style>
 </head>
-
 <body style="background-color: yellowgreen;color:black">
-
     @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { autocomplete = "off" }))
     {
+        @Html.AntiForgeryToken()
+        <!-- Login Page -->
+        <div class="container" align="center">
+            <br />
+            <h1 style="color:blueviolet">LOGIN</h1>
+            <p style="color: ActiveBorder"><b>Please Enter Your Credentials to Login</b></p>
+            <table>
+                <tr>
+                    <td class="LableStyle">Email Id</td>
+                    <td>@Html.TextBoxFor(model => model.EmailId, new { @class = "control-label col-md-2", required = "required", IAutoFieldGenerator = "off" })</td>
 
-    <div class="container" align="center">
-        <br />
-        <h1 style="color:blueviolet">LOGIN</h1>
-        <p style="color: ActiveBorder"><b>Please Enter Your Credentials to Login</b></p>
+                    <td class="ValidationStyle">
+                        @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                    <td> <br /> <br /> </td>
+                </tr>
 
-        <table>
-            <tr>
-                <td style="color: sienna">EMAIL ID</td>
-                <td>@Html.TextBoxFor(model => model.EmailId, new { @class = "control-label col-md-2", required = "required", IAutoFieldGenerator = "off" })</td>
-                @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
-                <td> <br /> <br /> </td>
-            </tr>
+                <tr>
+                    <td class="LableStyle">Password </td>
+                    <td>@Html.PasswordFor(model => model.Password, new { @class = "control-label col-md-2", required = "required" })</td>
 
-            <tr>
-                <td style="color: sienna">PASSWORD </td>
-                <td>@Html.PasswordFor(model => model.Password, new { @class = "control-label col-md-2", required = "required" })</td>
-                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-                <td> <br /> <br /> </td>
-                <td> <br />  </td>
-            </tr>
-
-        </table>
-
-        @if (TempData["Error"] != null)
-        {
-            <div class="test">
-                <p style="color:red; font-size:150%; font-family:'Times New Roman';">@TempData["Error"]</p>
-                &nbsp;&nbsp;&nbsp;&nbsp;
-            </div>
-        }
-
-            <input id="Submit1" type="submit" name="submit" value="Login" style="background-color: royalblue;color:white" />
-            <input id="Reset1" type="reset" name="submit" value="Reset" style="background-color: royalblue;color:white" />
-
+                    <td class="ValidationStyle">
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </tr>
+            </table>
+            <br />
+            <input id="Submit" type="submit" name="submit" value="Login" style="background-color: royalblue;color:white" />
+            <input id="Reset" type="reset" name="submit" value="Reset" style="background-color: royalblue;color:white" />
+            <!-- Registration Page Redirection-->
             <div class="container signin">
                 <p><b>Don't You have an Account? @Html.ActionLink("Register", "Register", "Register") </b></p>
-
             </div>
-
+            @if (TempData["Error"] != null)
+            {
+                <p class="Login" style="color:red; font-size:150%; font-family:'Times New Roman';">@TempData["Error"]</p>
+            }
         </div>
-
-        }
+    }
 </body>
-
 </html>
 
 
