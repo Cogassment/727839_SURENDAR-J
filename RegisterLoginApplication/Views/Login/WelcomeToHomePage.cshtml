@@ -1,0 +1,22 @@
+﻿@{
+    /**/
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome To Home Page</title>
+</head>
+<body style="background-color:darkorchid; color:white">
+    @if (TempData["EmailId"] != null && TempData["Password"] != null)
+    {
+        <!-- Login Success: Welcome User to Home Page-->
+        <div class="LoggedIn" align="center">
+            <h1> Welcome @TempData["EmailId"].ToString()</h1>
+            @Html.ActionLink("Logout", "Login", "Login")
+        </div>
+    }
+</body>
+</html>
+
+
