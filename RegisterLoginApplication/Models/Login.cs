@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
@@ -18,6 +18,5 @@ namespace RegisterLoginApplication.Models
 
         [Required(ErrorMessage = "Please Enter Password")]
         public string Password { get; set; }
-
     }
 }
