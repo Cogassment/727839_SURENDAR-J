@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,79 +14,77 @@ namespace RegisterLoginApplication.Controllers
     public class RegisterController : Controller
     {
         // GET: Register
-        public ActionResult Index()
-        {
-            return View();
-        }
-
         public ActionResult Register()
         {
             return View();
-
         }
-
+        /// <summary>
+        /// Registration Form with Regular Expression and Required Error Message which will Store the Data Value in Database
+        /// <parameter name =/*"register"*/></parameter>
+        /// <summary/>
         [HttpPost]
-        public ActionResult Register(Register rg)
+        public ActionResult Register(Register register)
         {
-               //Model Binding Validation
-                if (ModelState.IsValid)
+            if (ModelState.IsValid)
+            {
+                if (EmailIdExists(register.EmailId) != 1)
                 {
                     try
                     {
-                        // Register(); Registration Success Message
-                        TempData["UserMessage"] = "Registered Successfully";
-                        
-                        //Instantiate Connection using Connection String
-                        string constr = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\Project\RegisterLoginApplication\RegisterLoginApplication\App_Data\RegisterLoginDb.mdf;Integrated Security=True";
-                        
-                        //New Instance which Containing Connection String
-                        SqlConnection con = new SqlConnection(constr);
-
+                        //Instantiate Connection String from("Constring")Web.Config
+                        string connectionString = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
+                        SqlConnection connection = new SqlConnection(connectionString);
                         //Inserting Field Values into the Table using Insert Query
-                        string query = "INSERT INTO RegisterLoginTable VALUES(@FirstName,@LastName,@EmailId,@MobileNumber,@Role,@Password,@ConfirmPassword)";
-                        SqlCommand cmd = new SqlCommand(query, con);
-                        cmd.Parameters.AddWithValue("@FirstName", SqlDbType.VarChar).Value = rg.FirstName;
-                        cmd.Parameters.AddWithValue("@LastName", SqlDbType.VarChar).Value = rg.LastName;
-                        cmd.Parameters.AddWithValue("@EmailId", SqlDbType.VarChar).Value = rg.EmailId;
-                        cmd.Parameters.AddWithValue("@MobileNumber", SqlDbType.VarChar).Value = rg.MobileNumber;
-                        cmd.Parameters.AddWithValue("@Role", SqlDbType.VarChar).Value = rg.Role;
-                        cmd.Parameters.AddWithValue("@Password", SqlDbType.VarChar).Value = rg.Password;
-                        cmd.Parameters.AddWithValue("@ConfirmPassword", SqlDbType.VarChar).Value = rg.ConfirmPassword;
-
-                        //Open the Connection
-                        con.Open();
-
-                        //ExecuteNonQuery(); => Execute Command Statement which we given in Sql Command and Getting Query Results
-                        int res = cmd.ExecuteNonQuery();
-
-                        //Close the Connection
-                        con.Close();
-
+                        string query = "Insert Into RegisterLoginTable Values(@FirstName,@LastName,@EmailId,@MobileNumber,@Role,@Password,@ConfirmPassword)";
+                        SqlCommand command = new SqlCommand(query, connection);
+                        command.Parameters.AddWithValue("@FirstName", SqlDbType.VarChar).Value = register.FirstName;
+                        command.Parameters.AddWithValue("@LastName", SqlDbType.VarChar).Value = register.LastName;
+                        command.Parameters.AddWithValue("@EmailId", SqlDbType.VarChar).Value = register.EmailId;
+                        command.Parameters.AddWithValue("@MobileNumber", SqlDbType.VarChar).Value = register.MobileNumber;
+                        command.Parameters.AddWithValue("@Role", SqlDbType.VarChar).Value = register.Role;
+                        command.Parameters.AddWithValue("@Password", SqlDbType.VarChar).Value = register.Password;
+                        command.Parameters.AddWithValue("@ConfirmPassword", SqlDbType.VarChar).Value = register.ConfirmPassword;
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        connection.Close();
+                        @TempData["UserMessage"] = "Registered Successfully";
                         //Clearing Entered Field Values after Submission
                         ModelState.Clear();
                         return View();
-                        
                     }
-
                     catch (Exception)
                     {
-                        // Register(UsrMsg); Registration Failed Message
+                        //Registration Failed Message
                         @TempData["UserMessage"] = "Registration Failed!";
-
-                        // Email Err: Already Exist
-                        @TempData["EmailError"] = "Email Id Already Exist!";
-                        
                         return View();
                     }
                 }
                 else
                 {
-                    return View();
-                    
+                    ViewBag.Message = "Email Id Already Exist";
                 }
-            
+                return View();
+            }
+            return View();
         }
 
+        private int EmailIdExists(string EmailId)
+        {
+            int isUserExists = 0;
+            //Instantiate Connection String from("Constring")Web.Config
+            string connectionstring = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionstring))
+            {
+                string userExistQuery = "Select Count(*) From dbo.RegisterLoginTable Where EmailId='" + EmailId + "'";
+                using (SqlCommand command = new SqlCommand(userExistQuery))
+                {
+                    command.Connection = connection;
+                    connection.Open();
+                    isUserExists = Convert.ToInt32(command.ExecuteScalar());
+                    connection.Close();
+                }
+            }
+            return isUserExists;
+        }
     }
 }
-
