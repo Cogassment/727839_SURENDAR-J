@@ -1,4 +1,4 @@
-﻿using System.Web.Mvc;
+using System.Web.Mvc;
 using RegisterLoginApplication.Models;
 using System.Data;
 using System.Configuration;
@@ -10,85 +10,64 @@ namespace RegisterLoginApplication.Controllers
     public class LoginController : Controller
     {
         // GET: Login
-
         public ActionResult Login()
         {
-
             return View();
-
         }
-
+        /// <summary>
+        /// Login Page Validation with EmailId and Password from Database(RegisterLoginTable)
+        /// <parameter name =/*"login"*/></parameter>
+        /// </summary>
         [HttpPost]
-        public ActionResult Login(Login lgn)
+        public ActionResult Login(Login login)
         {
-               //Model Binding Validation
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        //Instantiate Connection using Connection String
-                        string constr = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\Project\RegisterLoginApplication\RegisterLoginApplication\App_Data\RegisterLoginDb.mdf;Integrated Security=True";
-                        SqlConnection sqlcon = new SqlConnection(constr);
-
-                        //Selecting Field Values into the Table using Select Query
-                        string sqlquery = "select EmailId,Password from [dbo].[RegisterLoginTable] where EmailId=@EmailId and Password=@Password";
-
-                        //Opent the Connection
-                        sqlcon.Open();
-
-                        //New Instance with Query & Connection
-                        SqlCommand sqlcom = new SqlCommand(sqlquery, sqlcon);
-
-                        //Adding Values
-                        sqlcom.Parameters.AddWithValue("@EmailId", lgn.EmailId);
-                        sqlcom.Parameters.AddWithValue("@Password", lgn.Password);
-                        SqlDataReader sdr = sqlcom.ExecuteReader();
-                        
-                        //Validating Email Id(UserName) and Password
-                        if (sdr.Read())
-                        {
-                            Session["EmailId"] = lgn.EmailId.ToString();
-                            Session["Password"] = lgn.Password.ToString();
-                            Session["Error"] = "";
-
-                            //Successfull Login Page
-                            return RedirectToAction("Welcome");
-                        }
-                        
-                        else
-                        {
-                            //Error Message 
-                            TempData["Error"] = "Inavlid Credentials!";
-
-                            // Returning and Redirect to Login Page
-                            return RedirectToAction("Login", "Login");
-                        }
-                        
-                    }
-
-                    catch (Exception e)
-                    {
-                        throw new Exception(e.ToString());
-                    }
-                }
-                else
-                 {
-                    // Returning and Redirect to Login Page
-                    return RedirectToAction("Login", "Login");
-                }
-               
-            }
-        
-            // Welcome(); => Logged In Page View 
-            public ActionResult Welcome()
+            if (ModelState.IsValid)
             {
-            //Return to Logged In Page
-                return View();
-
+                try
+                {
+                    //Instantiate Connection String from("Constring")Web.Config
+                    string connectionString = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
+                    SqlConnection connection = new SqlConnection(connectionString);
+                    //Retreiving EmailId and Password from Table
+                    string sqlquery = "select EmailId,Password from [dbo].[RegisterLoginTable] where EmailId=@EmailId and Password=@Password";
+                    connection.Open();
+                    SqlCommand command = new SqlCommand(sqlquery, connection);
+                    command.Parameters.AddWithValue("@EmailId", login.EmailId);
+                    command.Parameters.AddWithValue("@Password", login.Password);
+                    SqlDataReader dataReader = command.ExecuteReader();
+                    //Validating Email Id and Password
+                    if (dataReader.Read())
+                    {
+                        TempData["EmailId"] = login.EmailId.ToString();
+                        TempData["Password"] = login.Password.ToString();
+                        TempData["Error"] = "";
+                        return RedirectToAction("WelcomeToHomePage");
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Inavlid Credentials!";
+                        return RedirectToAction("Login", "Login");
+                    }
+                }
+                catch (Exception exception)
+                {
+                    throw new Exception(exception.ToString());
+                }
             }
-
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        /// <summary>
+        /// If Login Success, it Redirect to this Page: Logged In(WelocomeToHomePage)
+        /// </summary>
+        public ActionResult WelcomeToHomePage()
+        {
+            return View();
         }
     }
+}
 
 
 
