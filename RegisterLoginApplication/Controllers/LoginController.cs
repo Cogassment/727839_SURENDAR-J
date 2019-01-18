@@ -16,7 +16,7 @@ namespace RegisterLoginApplication.Controllers
         }
         /// <summary>
         /// Login Page Validation with EmailId and Password from Database(RegisterLoginTable)
-        /// <parameter name =/*"login"*/></parameter>
+        /// <parameter name =/*login"*/></parameter>
         /// </summary>
         [HttpPost]
         public ActionResult Login(Login login)
@@ -49,9 +49,11 @@ namespace RegisterLoginApplication.Controllers
                         return RedirectToAction("Login", "Login");
                     }
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
-                    throw new Exception(exception.ToString());
+                    //Login Failed Message
+                    @TempData["UserMessage"] = "Login Failed!";
+                    return View();
                 }
             }
             else
