@@ -27,7 +27,7 @@ namespace RegisterLoginApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (EmailIdExists(register.EmailId) != 1)
+                if (EmailIdExists(register.EmailId) != true)
                 {
                     try
                     {
@@ -68,9 +68,9 @@ namespace RegisterLoginApplication.Controllers
             return View();
         }
 
-        private int EmailIdExists(string EmailId)
+        private Boolean EmailIdExists(string EmailId)
         {
-            int isUserExists = 0;
+            Boolean isUserExists = false;
             //Instantiate Connection String from("Constring")Web.Config
             string connectionstring = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionstring))
@@ -80,7 +80,7 @@ namespace RegisterLoginApplication.Controllers
                 {
                     command.Connection = connection;
                     connection.Open();
-                    isUserExists = Convert.ToInt32(command.ExecuteScalar());
+                    isUserExists = Convert.ToBoolean(command.ExecuteScalar());
                     connection.Close();
                 }
             }
